@@ -29,7 +29,8 @@ Other changes are:
 
 Using the DS1307 clock chip changes the way the clock works.  Previously, the clock had to have a Wifi connection to work.  Now it doesn't.  The clock always tries to connect to Wifi at power-up, but only for 15 seconds.  If Wifi can't connect, the clock chip time is used.  The 15 second time can be changed in the XY-Wifi-Clock.h file.  Whenever a successful NTP clock update occurs, the clock chip time is reset.  Note that a CR927 battery must be installed for the clock to maintain time without power.
 
-One other change is to easily allow changing the Wifi connection.  If you hold the SET button down for 5 seconds during power-up, the currently saved Wifi connection is erased and the XY-Clock hotspot is activated.  Connect to the XY-Clock hotspot, then access it at 192.168.4.1 to pick a new Wifi connection.  The display will show a count-down from 5 to 1, and will then display "conn".
+One other modification is to easily allow changing the Wifi connection.  If you hold the SET button down for 5 seconds during power-up, the currently saved Wifi connection is erased and the XY-Clock hotspot is activated.  The display will show a count-down from 5 to 1, and will then display "conn". 
+ Connect to the XY-Clock hotspot, then access it at 192.168.4.1 to pick a new Wifi connection.
 
 ## Possible Future Changes
 
@@ -80,7 +81,7 @@ Once the new firmware has been uploaded, disconnect GPIO0 from GND and reset the
 
 ### SPIFFs
 
-For now, this firmware requires that you add SPIFFs sketch data as a second step in the flashing process.  Use the same method as above to put the ESP into flashing mode.
+This firmware requires that you add SPIFFs sketch data as a second step in the flashing process.  Use the same method as above to put the ESP into flashing mode.
 
 You will need the ESP8266 File System Uploader plugin for arduino IDE to upload the config web page to the device.  Get it here: https://github.com/esp8266/arduino-esp8266fs-plugin.  This plugin is only compatible with Legacy Arduino IDE 1.8 (not the newer 2).
 
@@ -102,7 +103,7 @@ You will need to install support for the ESP8266 chip in the Arduino IDE as well
 
 * It uses the configured timezone to then display the correct time for your region. The Wifi clock will attempt to setup an mDNS entry for http://xy-clock.local or the device name you specify. While mDNS is apparently natively supported in Windows 10 build 1703 and later, if it doesn't work for you on Windows you may need to install the Apple Bonjour service ([download link](https://support.apple.com/kb/dl999)). That being said, you may have better success using the IP address of the clock.
 
-* The config page looks like the screenshot below. The focus at the moment is functionality rather than looks, but at some point this needs to have better styling applied to it.
+* The config page looks like the screenshot below.
 
 ![image](./Documentation/Images/XY-Clock-Config.png)
 
@@ -116,11 +117,11 @@ The buttons can be used as such:
 
 ###  Function Notes
 
-Changing the brightness using the buttons is temporary and will reset whenever the auto-brightness is changed by the Day Start or Night Start times.  However the auto-brightness can be disabled via the checkbox on the config page.
+Changing the brightness using the buttons is temporary and will reset whenever the auto-brightness is changed by the Day or Night start times.  However this behavior can be disabled via the checkbox on the config page.
 
 The hotspot will be created using the device name from the configuration page.  The configuration page can then be accessed through http://192.168.4.1 (which is an ESP device's default).  The hotspot will be automatically turned off after 5 minutes.
 
-There some quirks and known issues with ESP devices, especially when accessing the hotspot on certain Android phones.   First, it may not correctly load the clock's configuration if the mobile device still has data mode on.  So, try turning off mobile data when loading the webpage.  Second, it appears that Chrome mobile may work better - if there is an error, you can simply pull down to refresh the page (unlike some other mobile browsers).  Finally, it's important to know that changing the time zone or device name WILL reset the device, turning off the hotspot, so you may need to repeat turning on and connecting to the hotspot after changing timezones.
+It has been reported that there are some quirks and known issues with ESP devices, especially when accessing the hotspot on certain Android phones.   First, it may not correctly load the clock's configuration if the mobile device still has data mode on.  So, try turning off mobile data when loading the webpage.  Second, it appears that Chrome mobile may work better - if there is an error, you can simply pull down to refresh the page (unlike some other mobile browsers).
 
 
 ## Thanks
