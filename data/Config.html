@@ -8,8 +8,6 @@
 
    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-   <title>XY-Wifi Clock</title>
-
    <style>
 	   body { font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }
 	   label { font-size: 14px; font-weight: normal; width:180px; display: inline-block; }
@@ -43,9 +41,9 @@
 
 <body>
 
-<h1>XY-Wifi Clock</h1>
-
 <form>
+   <h1 id="pageTitle">XY-Wifi Clock</h1>
+
    <fieldset>
 	  <legend>Status</legend>
 
@@ -74,7 +72,6 @@
 
    <fieldset>
 	  <legend>Config</legend>
-
 
 	  <h3>General</h3>
 	  <label for="deviceName">Device Name</label>
@@ -203,6 +200,7 @@
 
 	function displayConfig(config, firstTime)
 	{
+		document.getElementById("pageTitle").innerHTML    = config.deviceName;
 		document.getElementById("deviceName").value		  = config.deviceName;
 		document.getElementById("timezone").value		  = config.timezone;
 		document.getElementById("displayMode").value	  = config.displayMode;
