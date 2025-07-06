@@ -9,7 +9,7 @@ void startWebServer()
     server.on("/config",            handleConfigJson);
     server.on("/status",            handleStatusJson);
     server.on("/brightness",        handleBrightnessJson);
-    server.on("/debug",             hanndleDebugText);
+    server.on("/debug",             handleDebugText);
     server.on("/reset",             handleReset);
     server.on("/timezones.json",    handleGetTimezonesJson);
     server.on("/displayModes.json", handleGetDisplayModesJson);
@@ -256,7 +256,9 @@ void handlePostConfigJson()
 
 void handleStatusJson()
 {
-    Serial.println("Web handleStatusJson");
+//     Serial.println("Web handleStatusJson");
+
+    char tempBuffer[40];
 
     DynamicJsonDocument doc(2048);
 
@@ -264,10 +266,44 @@ void handleStatusJson()
     doc["IP"]   = WiFi.localIP().toString();
     doc["RSSI"] = WiFi.RSSI();
 
-    char NTPbuffer[40];
+    uint8_t tempHr  = currentHour;
+    uint8_t tempMin = currentMinute;
+    uint8_t tempSec = currentSecond;
+    switch (config.getDisplayModeNumber())
+    {
+        // 12 hour display modes
+        case TIME_MODE_12_SOLID_COLON:
+        case TIME_MODE_12_SOLID_COLON_AM_LED:
+        case TIME_MODE_12_SOLID_COLON_PM_LED:
+        case TIME_MODE_12_BLINKING_COLON_ALWAYS:
+        case TIME_MODE_12_BLINKING_COLON_AM:
+        case TIME_MODE_12_BLINKING_COLON_PM:
+            {
+                String AM_PM_string = (tempHr < 12) ? "AM" : "PM";
+                if (tempHr == 0)
+                {
+                    tempHr = 12;
+                }
+                if (tempHr >= 13)
+                {
+                    tempHr -= 12;
+                }
+                sprintf(tempBuffer, "%u:%02u:%02u %s", tempHr, tempMin, tempSec, AM_PM_string);
+            }
+            break;
+
+        // else must be 24 hour mode
+        default:
+        case TIME_MODE_24_SOLID_COLON:
+        case TIME_MODE_24_BLINKING_COLON:
+            sprintf(tempBuffer, "%02u:%02u:%02u", tempHr, tempMin, tempSec);
+            break;
+    }
+    doc["TIME"] = tempBuffer;
+
     if (!updatedByNTP)
     {
-        sprintf(NTPbuffer, "never");
+        sprintf(tempBuffer, "never");
     }
     else
     {
@@ -280,30 +316,30 @@ void handleStatusJson()
         hoursSinceNTP   %= 24;
         if (daysSinceNTP > 0)
         {
-            sprintf(NTPbuffer, "%u dy, %u hr, %u min, %u sec",
+            sprintf(tempBuffer, "%u dy, %u hr, %u min, %u sec",
                     (unsigned int)daysSinceNTP, (unsigned int)hoursSinceNTP, (unsigned int)minutesSinceNTP, (unsigned int)secondsSinceNTP);
         }
         else if (hoursSinceNTP > 0)
         {
-            sprintf(NTPbuffer, "%u hr, %u min, %u sec",
+            sprintf(tempBuffer, "%u hr, %u min, %u sec",
                     (unsigned int)hoursSinceNTP, (unsigned int)minutesSinceNTP, (unsigned int)secondsSinceNTP);
         }
         else if (minutesSinceNTP > 0)
         {
-            sprintf(NTPbuffer, "%u min, %u sec",
+            sprintf(tempBuffer, "%u min, %u sec",
                     (unsigned int)minutesSinceNTP, (unsigned int)secondsSinceNTP);
         }
         else
         {
-            sprintf(NTPbuffer, "%u sec",
+            sprintf(tempBuffer, "%u sec",
                     (unsigned int)secondsSinceNTP);
         }
     }
-    doc["NTP"] = NTPbuffer;
-
-    doc["BRIGHTNESS"] = currentBrightness;
+    doc["NTP"] = tempBuffer;
 
     doc["RESET"] = lastResetTime;
+
+    doc["BRIGHTNESS"] = currentBrightness;
 
     String buffer;
     serializeJson(doc, buffer);
@@ -335,7 +371,7 @@ void handleBrightnessJson()
 }
 
 
-void hanndleDebugText()
+void handleDebugText()
 {
     Serial.println(server.arg("plain"));
 

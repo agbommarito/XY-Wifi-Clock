@@ -58,6 +58,9 @@
 	  <label for="RSSI">RSSI (dBm)</label>
 	  <input type="text" id="RSSI" name="RSSI" readonly><br/><br/>
 
+	  <label for="TIME">Displayed Time</label>
+	  <input type="text" id="TIME" name="TIME" readonly><br/><br/>
+
 	  <label for="NTP">Last NTP Update</label>
 	  <input type="text" id="NTP" name="NTP" readonly><br/><br/>
 
@@ -265,6 +268,7 @@
 		document.getElementById("SSID").value	= status.SSID;
 		document.getElementById("IP").value		= status.IP;
 		document.getElementById("RSSI").value	= status.RSSI;
+		document.getElementById("TIME").value   = status.TIME;
 		document.getElementById("NTP").value	= status.NTP;
 		document.getElementById("RESET").value	= status.RESET;
 		document.querySelector(".slider").value = status.BRIGHTNESS;
